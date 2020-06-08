@@ -10,7 +10,8 @@ import axios from 'axios'
 // Router
 Vue.use(VueRouter);
 
-Vue.prototype.$apiUrl = 'http://localhost:8080/api'
+let url = document.location.protocol + "//" + document.location.hostname + ":8080/"
+Vue.prototype.$apiUrl = url + 'api' //'http://admin:8080/api'
 Vue.prototype.$http = axios
 
 const router = new VueRouter({

@@ -9,5 +9,5 @@ services:
     ports:
       - "80:80"
     links:
-      - server
+      - admin
 
