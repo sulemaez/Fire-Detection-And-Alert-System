@@ -3,7 +3,7 @@ services:
   admin:
     build: ./adminapi
     ports:
-      - "80:80"
+      - "8080:8080"
   front:  
     build: ./frontend
     ports:
