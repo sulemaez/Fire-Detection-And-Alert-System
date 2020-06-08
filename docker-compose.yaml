@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  admin:
+    build: ./adminapi
+     ports:
+      - "80:80"
+  front:  
+    build: ./frontend
+     ports:
+      - "80:80"
