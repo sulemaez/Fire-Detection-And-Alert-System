@@ -12,6 +12,7 @@ public class Location {
     private String id;
     private String name;
     private String coordinates;
+    private String mainLocationId;
 
 
 }
