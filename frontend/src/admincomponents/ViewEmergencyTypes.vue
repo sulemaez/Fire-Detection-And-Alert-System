@@ -48,17 +48,29 @@
 
 
 <script>
-export default {
-    data (){
-        return{
-            types: [
-                { 
-                    name : "Fire",
-                    description : "A fire"
-                },
-                
-            ]    
+    export default {
+        data (){
+            return{
+                types : [] 
+            }
+        },
+        methods : {
+
+        },
+        mounted(){
+            this.$http.get(`${this.$apiUrl}/emergencytypes`)
+                .then(data =>{ 
+                    let types = data.data._embedded.emergencytypes
+                    this.types = types
+                })
+             .catch(err => { 
+                this.$swal.fire(
+                    ``,
+                    `${err.response.data.error}`,
+                    'error'
+                )
+             } )
         }
+
     }
-}
 </script>

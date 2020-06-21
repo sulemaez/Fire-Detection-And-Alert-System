@@ -60,12 +60,19 @@ export default {
       
             this.$http.post(`${this.$apiUrl}/usertypes`,data)
             .then(data=>{
-                alert("DONE")
+                  this.$swal.fire(
+                    ``,
+                    `Added Successfully !`,
+                    'success'
+                )
                 this.clear()
             }) 
             .catch(err => {
-               alert("error");
-               console.log(err)
+                 this.$swal.fire(
+                    ``,
+                    `${err.response.data.error}`,
+                    'error'
+                )
             })
 
        },

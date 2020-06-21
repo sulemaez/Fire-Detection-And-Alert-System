@@ -49,17 +49,17 @@ export default {
       ]
     },
     {
-      name: 'Location',
+      name: 'Main Location',
       icon: 'fa fa-map-marker',
       children:[
         {
           name : 'Add',
-          url : '/addlocation',
+          url : '/addmainlocation',
           icon : 'fa fa-plus',
         },
         {
           name : 'View All',
-          url : '/viewlocations',
+          url : '/viewmainlocations',
           icon : 'fa fa-eye'
         }
       ]

@@ -63,7 +63,13 @@ export default {
             let types = data.data._embedded.usertypes;
             this.types = types;
         })
-        .catch(e => { } )
+        .catch(e => {
+             this.$swal.fire(
+                ``,
+                `${err.response.data.error}`,
+                'error'
+            )
+         } )
     }
 
 }

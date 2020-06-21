@@ -3,7 +3,7 @@
         <div class="col-md-6">
              <div class="card">
           <div class="card-header">
-            <strong>Add Emergency Type</strong>
+            <strong>Add Main Location</strong>
           </div>
 
           <div class="card-body card-block">
@@ -11,15 +11,22 @@
                  <div class="row form-group">
                       <div class="col col-md-3"><label class=" form-control-label">Name :</label></div>
                       <div class="col-12 col-md-9">
-                         <input  class="form-control" type="text" v-model="name" >
-                         <small class="text-danger">{{ nameError }}</small>
+                         <input  class="form-control" type="text" v-model="name">
+                          <small class="text-danger">{{ nameError }}</small>
+                      </div>
+                 </div>
+                  <div class="row form-group">
+                      <div class="col col-md-3"><label class=" form-control-label">X :</label></div>
+                      <div class="col-12 col-md-9">
+                         <input  class="form-control" type="text" v-model="xValue">
+                          <small class="text-danger">{{ xError }}</small>
                       </div>
                  </div>
                  <div class="row form-group">
-                      <div class="col col-md-3"><label class=" form-control-label">Description :</label></div>
+                      <div class="col col-md-3"><label class=" form-control-label">Y :</label></div>
                       <div class="col-12 col-md-9">
-                           <textarea class="form-control" cols="30" rows="10" v-model="description" ></textarea>
-                           <small class="text-danger">{{ descriptionError }}</small>
+                         <input  class="form-control" type="text" v-model="yValue">
+                         <small class="text-danger">{{ yError }}</small>
                       </div>
                  </div>
 
@@ -38,14 +45,15 @@ export default {
     data(){
         return {
             name : "",
-            description : "",
-            descriptionError : "",
-            nameError : ""
+            xValue : "",
+            yValue : "",
+            nameError : "",
+            xError : "",
+            yError : ""
         }
     },
     methods : {
-        // ${err.response.data.error}
-       
+ 
        onSubmit(){
             
             //validate
@@ -56,10 +64,10 @@ export default {
 
             let data = {
                 name : this.name,
-                description : this.description
+                coordinates : `${this.xValue},${this.yValue}`
             }
       
-            this.$http.post(`${this.$apiUrl}/emergencytypes`,data)
+            this.$http.post(`${this.$apiUrl}/mainlocations`,data)
             .then(data=>{
                this.$swal.fire(
                     ``,
@@ -80,20 +88,23 @@ export default {
        },
        checkErrorMessages(){
            this.nameError = this.name.trim() == "" ?  "Please add a name" : ""
-           this.descriptionError = this.description.trim() == "" ?  "Please add a description" : ""
+           this.xError = this.xValue.trim() == "" ?  "Please add X coordinate" : ""
+           this.yError = this.yValue.trim() == "" ?  "Please add Y coordinate" : ""
        },
        clear(){
-           this.name = ""
-           this.description = ""
-           this.descriptionError = ""
-           this.nameError = ""
+            this.name = ""
+            this.xValue = ""
+            this.yValue = ""
+            this.nameError = ""
+            this.xError = ""
+            this.yError = ""
        }
     },
  
     computed : {
         formReady(){
             return this.nameError.length == 0 && 
-            this.descriptionError.length == 0
+            this.xError.length == 0 && this.yError.length == 0
         }
     }
 }

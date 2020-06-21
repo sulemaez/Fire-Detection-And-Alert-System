@@ -48,20 +48,3 @@
 </template>
 
 
-
-<script>
-export default {
-    data (){
-        return{
-            emergencies : [
-                { 
-                    type : "Fire",
-                    location : "Koinange",
-                    date : "21st May 2020 20:18"
-                },
-                
-            ]    
-        }
-    }
-}
-</script>
