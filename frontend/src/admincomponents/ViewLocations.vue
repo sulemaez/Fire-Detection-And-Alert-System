@@ -57,9 +57,9 @@
 
         },
         mounted(){
-            this.$http.get(`${this.$apiUrl}/mainlocations`)
+            this.$http.get(`${this.$apiUrl}/locations`)
                 .then(data =>{ 
-                    let  locations = data.data._embedded.mainlocations
+                    let  locations = data.data._embedded.locations
                     this.locations = locations
                 })
              .catch(err => { 

@@ -12,6 +12,7 @@ const Page500 = resolve => { require.ensure(['../pages/Page500.vue'], ()=>{ reso
 //admin components
 const AddUserType = resolve => { require.ensure(['../admincomponents/AddUserType.vue'], ()=>{ resolve(require('../admincomponents/AddUserType.vue')); }); };
 const AddEmergencyType = resolve => { require.ensure(['../admincomponents/AddEmergencyType.vue'], ()=>{ resolve(require('../admincomponents/AddEmergencyType.vue')); }); };
+const AddLocation = resolve => { require.ensure(['../admincomponents/AddLocation.vue'], ()=>{ resolve(require('../admincomponents/AddLocation.vue')); }); };
 const AddMainLocation = resolve => { require.ensure(['../admincomponents/AddMainLocation.vue'], ()=>{ resolve(require('../admincomponents/AddMainLocation.vue')); }); };
 const AddCamera = resolve => { require.ensure(['../admincomponents/AddCamera.vue'], ()=>{ resolve(require('../admincomponents/AddCamera.vue')); }); };
 const AddUser = resolve => { require.ensure(['../admincomponents/AddUser.vue'], ()=>{ resolve(require('../admincomponents/AddUser.vue')); }); };
@@ -22,6 +23,7 @@ const ViewUserTypes = resolve => { require.ensure(['../admincomponents/ViewUserT
 const ViewEmergencies = resolve => { require.ensure(['../admincomponents/ViewEmergencies.vue'], ()=>{ resolve(require('../admincomponents/ViewEmergencies.vue')); }); } 
 const ViewCameras = resolve => { require.ensure(['../admincomponents/ViewCameras.vue'], ()=>{ resolve(require('../admincomponents/ViewCameras.vue')); }); } 
 const ViewMainLocations = resolve => { require.ensure(['../admincomponents/ViewMainLocations.vue'], ()=>{ resolve(require('../admincomponents/ViewMainLocations.vue')); }); } 
+const ViewLocations = resolve => { require.ensure(['../admincomponents/ViewLocations.vue'], ()=>{ resolve(require('../admincomponents/ViewLocations.vue')); }); } 
 
 
 export const routes = [
@@ -38,6 +40,7 @@ export const routes = [
             { path : '/addusertypes', name: 'addusertypes', component: AddUserType },
             { path : '/addemergencytype', component : AddEmergencyType },
             { path : '/addmainlocation', component : AddMainLocation },
+            { path : '/addlocation', component : AddLocation },
             { path : '/addcamera' , component : AddCamera },
             { path : '/adduser' , component : AddUser},
             { path : '/viewusers' ,component : ViewUsers},
@@ -45,7 +48,8 @@ export const routes = [
             { path : '/viewusertypes' , component : ViewUserTypes},
             { path : '/viewemergencies', component : ViewEmergencies},
             { path : '/viewcameras' , component : ViewCameras},
-            { path : '/viewmainlocations' , component : ViewMainLocations}
+            { path : '/viewmainlocations' , component : ViewMainLocations},
+            { path : '/viewlocations', component : ViewLocations}
         ]
     },
 

@@ -65,6 +65,22 @@ export default {
       ]
     },
     {
+      name: 'Location',
+      icon: 'fa fa-map-marker',
+      children:[
+        {
+          name : 'Add',
+          url : '/addlocation',
+          icon : 'fa fa-plus',
+        },
+        {
+          name : 'View All',
+          url : '/viewlocations',
+          icon : 'fa fa-eye'
+        }
+      ]
+    },
+    {
       name: 'User Types',
       icon: 'fa fa-user',
       children:[
