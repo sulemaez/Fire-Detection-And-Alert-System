@@ -2,12 +2,18 @@ package com.eds.eds.validators;
 
 
 import com.eds.eds.models.User;
+import com.eds.eds.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 @Component("beforeCreateUserValidator")
 public class UserValidator implements Validator {
+
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public boolean supports(Class<?> clazz) {
         return User.class.equals(clazz);

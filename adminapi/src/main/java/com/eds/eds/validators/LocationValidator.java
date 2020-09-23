@@ -21,8 +21,6 @@ public class LocationValidator implements Validator {
              errors.rejectValue("name","field.empty");
          }
 
-         if(location.getCoordinates() == null || location.getCoordinates().equals("")){
-             errors.rejectValue("coordinates","field.empty");
-         }
+
     }
 }

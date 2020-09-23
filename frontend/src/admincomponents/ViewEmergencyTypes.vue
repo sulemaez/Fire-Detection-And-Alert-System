@@ -23,14 +23,14 @@
                         <td>
                             <div class="row">
                                 <div class="col-12">
-                                    <button class="btn btn-primary w-75">
+                                    <button @click="edit(type.id)" class="btn btn-primary w-75">
                                         <i class="fa fa-pencil"></i>
                                     </button>
                                 </div>
                             </div>
                             <div class="row mt-1">
                                 <div class="col-12">
-                                    <button class="btn btn-danger w-75">
+                                    <button @click="deleteType(type.id)" class="btn btn-danger w-75">
                                         <i class="fa fa-close"></i>
                                     </button>
                                 </div>
@@ -55,21 +55,45 @@
             }
         },
         methods : {
-
-        },
-        mounted(){
-            this.$http.get(`${this.$apiUrl}/emergencytypes`)
+            edit(id){
+               this.$router.push({ path: 'addemergencytype', query: { edit : id } })
+            },
+            deleteType(id){
+                 this.$http.delete(`${this.$apiUrl}/emergencytypes/${id}`)
+                    .then( data => {
+                        this.$swal.fire(
+                                ``,
+                                `Deleted Successfully !`,
+                                'success'
+                            )
+                            this.getUserTypes()
+                    })
+                    .catch( err => {
+                        this.$swal.fire(
+                                ``,
+                                `${err.response.data.error}`,
+                                'error'
+                            )
+                    })
+            },
+            getUserTypes(){
+                this.types = []
+                 this.$http.get(`${this.$apiUrl}/emergencytypes`)
                 .then(data =>{ 
                     let types = data.data._embedded.emergencytypes
                     this.types = types
                 })
-             .catch(err => { 
-                this.$swal.fire(
-                    ``,
-                    `${err.response.data.error}`,
-                    'error'
-                )
-             } )
+                .catch(err => { 
+                    this.$swal.fire(
+                        ``,
+                        `${err.response.data.error}`,
+                        'error'
+                    )
+                })
+            }          
+        },
+        mounted(){
+           this.getUserTypes()
         }
 
     }

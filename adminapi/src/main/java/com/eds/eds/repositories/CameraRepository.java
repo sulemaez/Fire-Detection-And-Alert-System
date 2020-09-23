@@ -12,5 +12,7 @@ public interface CameraRepository extends MongoRepository<Camera,String> {
 
   Camera findByName(@Param("typeId") String name);
 
-  List<Camera> findAllByLocationId(@Param("typeId") String locationId);
+  List<Camera> findAllByLocationId(@Param("locationId") String locationId);
+
+
 }

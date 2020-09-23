@@ -3,7 +3,7 @@
         <div class="col-md-6">
              <div class="card">
           <div class="card-header">
-            <strong>Add Emergency Type</strong>
+            <strong> {{ edit ? 'Edit' : 'Add' }} Emergency Type</strong>
           </div>
 
           <div class="card-body card-block">
@@ -24,7 +24,7 @@
                  </div>
 
                  <div class="col-md-12 d-flex justify-content-center">
-                    <button class="btn btn-primary w-25">ADD</button>
+                    <button class="btn btn-primary w-25">{{ edit ? 'Edit' : 'Add' }} </button>
                  </div>
              </form>
           </div>
@@ -40,12 +40,12 @@ export default {
             name : "",
             description : "",
             descriptionError : "",
-            nameError : ""
+            nameError : "",
+            edit : false
         }
     },
     methods : {
-        // ${err.response.data.error}
-       
+    
        onSubmit(){
             
             //validate
@@ -59,23 +59,42 @@ export default {
                 description : this.description
             }
       
-            this.$http.post(`${this.$apiUrl}/emergencytypes`,data)
-            .then(data=>{
-               this.$swal.fire(
-                    ``,
-                    `Added Successfully !`,
-                    'success'
-                )
-                this.clear()
-            }) 
-            .catch(err => {
+            if(!this.edit){
+                this.$http.post(`${this.$apiUrl}/emergencytypes`,data)
+                .then(data=>{
                 this.$swal.fire(
-                    ``,
-                    `${err.response.data.error}`,
-                    'error'
-                )
-            
-            })
+                        ``,
+                        `Added Successfully !`,
+                        'success'
+                    )
+                    this.clear()
+                }) 
+                .catch(err => {
+                    this.$swal.fire(
+                        ``,
+                        `${err.response.data.error}`,
+                        'error'
+                    )
+                
+                })
+            } else{
+                this.$http.put(`${this.$apiUrl}/emergencytypes/${this.$route.query.edit}`,data)
+                    .then(data=>{
+                    this.$swal.fire(
+                            ``,
+                            `Edit Successfully !`,
+                            'success'
+                        )
+                       
+                    }) 
+                    .catch(err => {
+                        this.$swal.fire(
+                            ``,
+                            `${err.response.data.error}`,
+                            'error'
+                        )
+                    })
+            }
 
        },
        checkErrorMessages(){
@@ -94,6 +113,28 @@ export default {
         formReady(){
             return this.nameError.length == 0 && 
             this.descriptionError.length == 0
+        }
+    },
+    mounted(){
+  
+          if(this.$route.query.edit != undefined){
+            this.edit = true
+
+            this.$http.get(`${this.$apiUrl}/emergencytypes/${this.$route.query.edit}`)
+            .then(data =>{ 
+                let type = data.data
+                this.name = type.name
+                this.description = type.description 
+
+             })
+            .catch(e => {
+                this.$swal.fire(
+                    ``,
+                    `${err.response.data.error}`,
+                    'error'
+                )
+            })  
+            
         }
     }
 }

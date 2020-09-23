@@ -4,10 +4,25 @@ services:
     build: ./adminapi
     ports:
       - "8080:8080"
+    links:
+      - database  
   front:  
     build: ./frontend
     ports:
       - "80:80"
     links:
       - admin
+  database:
+    image: 'mongo'
+    container_name: 'mongodb'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=sulemaez
+      - MONGO_INITDB_ROOT_PASSWORD=sulemaez
+      - MONGO_INITDB_DATABASE=eds
+    volumes:
+      - ./init-db.js:/docker-entrypoint-initdb.d/init-mongo-js:ro
+      - ./mongo-volume:/data/db
+    ports:
+      - '27017-27019:27017-27019'  
+
 

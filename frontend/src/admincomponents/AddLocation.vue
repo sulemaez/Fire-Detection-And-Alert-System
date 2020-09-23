@@ -3,7 +3,7 @@
         <div class="col-md-6">
              <div class="card">
           <div class="card-header">
-            <strong>Add Location</strong>
+            <strong>{{ edit ? 'Edit' : 'Add' }}  Location</strong>
           </div>
 
           <div class="card-body card-block">
@@ -20,31 +20,16 @@
                       <div class="col col-md-3"><label class=" form-control-label">Main Location:</label></div>
                       <div class="col-12 col-md-9">
                            <select id="mainLocationSelect" class="form-control">
-                               <option v-for="mainLocation in mainLocations" :value="mainLocation.id" >{{ mainLocation.name }}</option>
+                               <option v-for="mainLocation in mainLocations" :value="mainLocation.id" :selected="mainLocation.id == mainLocationId">{{ mainLocation.name }}</option>
                            </select>
+                            <small class="text-danger">{{ mainLocationError }}</small>
                       </div>
                  </div>
                  
-                  <div class="row form-group">
-                      <div class="col col-md-3"><label class=" form-control-label">X :</label></div>
-                      <div class="col-12 col-md-9">
-                         <input  class="form-control" type="text" v-model="xValue">
-                          <small class="text-danger">{{ xError }}</small>
-                      </div>
-                 </div>
-                 
-                 <div class="row form-group">
-                      <div class="col col-md-3"><label class=" form-control-label">Y :</label></div>
-                      <div class="col-12 col-md-9">
-                         <input  class="form-control" type="text" v-model="yValue">
-                         <small class="text-danger">{{ yError }}</small>
-                      </div>
-                 </div>
-
-                 <div class="col-md-12 d-flex justify-content-center">
-                    <button class="btn btn-primary w-25">ADD</button>
-                 </div>
-             </form>
+                <div class="col-md-12 d-flex justify-content-center">
+                        <button class="btn btn-primary w-25">{{ edit ? 'Edit' : 'Add' }} </button>
+                    </div>
+                </form>
           </div>
         </div>   
         </div>
@@ -56,68 +41,90 @@ export default {
     data(){
         return {
             name : "",
-            xValue : "",
-            yValue : "",
             nameError : "",
-            xError : "",
-            yError : "",
             mainLocations : [],
-            mainLocationSelect 
+            mainLocationError : "",
+            mainLocationId : "",
+            edit : false
         }
     },
     methods : {
  
-       onSubmit(){
-         
+       onSubmit(){     
             //validate
             this.checkErrorMessages() 
             if(!this.formReady){
                 return
             }
-
+        
             let data = {
                 name : this.name,
-                coordinates : `${this.xValue},${this.yValue}`,
-                mainLocationId : mainLocationSelect.value
+                mainLocationId : document.getElementById("mainLocationSelect").value
             }
       
-            this.$http.post(`${this.$apiUrl}/locations`,data)
-            .then(data=>{
-               this.$swal.fire(
-                    ``,
-                    `Added Successfully !`,
-                    'success'
-                )
-                this.clear()
-            }) 
-            .catch(err => {
+            if(!this.edit){
+                this.$http.post(`${this.$apiUrl}/locations`,data)
+                .then(data=>{
                 this.$swal.fire(
-                    ``,
-                    `${err.response.data.error}`,
-                    'error'
-                )
-            
-            })
+                        ``,
+                        `Added Successfully !`,
+                        'success'
+                    )
+                    this.clear()
+                }) 
+                .catch(err => {
+                    this.$swal.fire(
+                        ``,
+                        `${err.response.data.error}`,
+                        'error'
+                    )
+                
+                })
+            }else{
+                 this.$http.put(`${this.$apiUrl}/locations/${this.$route.query.edit}`,data)
+                .then(data=>{
+                this.$swal.fire(
+                        ``,
+                        `Edited Successfully !`,
+                        'success'
+                    )
+              
+                }) 
+                .catch(err => {
+                    this.$swal.fire(
+                        ``,
+                        `${err.response.data.error}`,
+                        'error'
+                    )
+                
+                })
+            }
 
        },
        checkErrorMessages(){
            this.nameError = this.name.trim() == "" ?  "Please add a name" : ""
-           this.xError = this.xValue.trim() == "" ?  "Please add X coordinate" : ""
-           this.yError = this.yValue.trim() == "" ?  "Please add Y coordinate" : ""
+           let loc = document.getElementById("mainLocationSelect").value
+
+           this.mainLocationError = loc == undefined || loc.trim() == "" ? "Please select main locatin" : "" 
        },
        clear(){
             this.name = ""
-            this.xValue = ""
-            this.yValue = ""
             this.nameError = ""
-            this.xError = ""
-            this.yError = ""
+            this.mainLocationError = ""
        },
        getMainLocations(){
            this.$http.get(`${this.$apiUrl}/mainlocations`)
                 .then(data =>{ 
                     let  locations = data.data._embedded.mainlocations
                     this.mainLocations = locations
+
+                    if(locations.length == 0 ){
+                        this.$swal.fire(
+                            ``,
+                            `No Main Locations available , Please add to continue`,
+                            'info'
+                         )
+                    }
                 })
              .catch(err => { 
                 this.$swal.fire(
@@ -131,13 +138,28 @@ export default {
  
     computed : {
         formReady(){
-            return this.nameError.length == 0 && 
-            this.xError.length == 0 && this.yError.length == 0
+            return this.nameError.length == 0 && this.mainLocationError.length == 0
         }
     },
     mounted(){
-       this.getMainLocations()
-       this.mainLocationSelect = document.getElementById("mainLocationSelect")
+         this.getMainLocations()
+         if(this.$route.query.edit != undefined){
+            this.edit = true
+
+            this.$http.get(`${this.$apiUrl}/locations/${this.$route.query.edit}`)
+            .then(data =>{ 
+                let location = data.data
+                this.name = location.name
+                this.mainLocationId = location.mainLocationId
+             })
+            .catch(e => {
+                this.$swal.fire(
+                    ``,
+                    `${err.response.data.error}`,
+                    'error'
+                )
+            })  
+        }
     }
 }
 </script>

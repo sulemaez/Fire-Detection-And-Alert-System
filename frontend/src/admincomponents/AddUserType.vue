@@ -3,7 +3,7 @@
         <div class="col-md-6">
              <div class="card">
           <div class="card-header">
-            <strong>Add User Type</strong>
+            <strong>{{ edit ? 'Edit' : 'Add' }}  User Type</strong>
           </div>
 
           <div class="card-body card-block">
@@ -24,7 +24,7 @@
                  </div>
 
                  <div class="col-md-12 d-flex justify-content-center">
-                    <button class="btn btn-primary w-25">ADD</button>
+                    <button class="btn btn-primary w-25">{{ edit ? 'Edit' : 'Add' }} </button>
                  </div>
              </form>
           </div>
@@ -41,7 +41,8 @@ export default {
             name : "",
             description : "",
             descriptionError : "",
-            nameError : ""
+            nameError : "",
+            edit : true
         }
     },
     methods : {
@@ -58,22 +59,41 @@ export default {
                 description : this.description
             }
       
-            this.$http.post(`${this.$apiUrl}/usertypes`,data)
-            .then(data=>{
-                  this.$swal.fire(
-                    ``,
-                    `Added Successfully !`,
-                    'success'
-                )
-                this.clear()
-            }) 
-            .catch(err => {
-                 this.$swal.fire(
-                    ``,
-                    `${err.response.data.error}`,
-                    'error'
-                )
-            })
+            if(!this.edit){
+                this.$http.post(`${this.$apiUrl}/usertypes`,data)
+                .then(data=>{
+                    this.$swal.fire(
+                        ``,
+                        `Added Successfully !`,
+                        'success'
+                    )
+                    this.clear()
+                }) 
+                .catch(err => {
+                    this.$swal.fire(
+                        ``,
+                        `${err.response.data.error}`,
+                        'error'
+                    )
+                })
+            }else{
+                    this.$http.put(`${this.$apiUrl}/usertypes/${this.$route.query.edit}`,data)
+                    .then(data=>{
+                        this.$swal.fire(
+                            ``,
+                            `Edit Successfully !`,
+                            'success'
+                        )
+                        this.clear()
+                    }) 
+                    .catch(err => {
+                        this.$swal.fire(
+                            ``,
+                            `${err.response.data.error}`,
+                            'error'
+                        )
+                    })
+            }
 
        },
        checkErrorMessages(){
@@ -91,6 +111,27 @@ export default {
         formReady(){
             return this.nameError.length == 0 && 
             this.descriptionError.length == 0
+        }
+    },
+    mounted(){
+        if(this.$route.query.edit != undefined){
+            this.edit = true
+
+            this.$http.get(`${this.$apiUrl}/usertypes/${this.$route.query.edit}`)
+            .then(data =>{ 
+                let usertype = data.data
+                this.name = usertype.name
+                this.description = usertype.description
+                
+             })
+            .catch(e => {
+                this.$swal.fire(
+                    ``,
+                    `${err.response.data.error}`,
+                    'error'
+                )
+            })  
+        
         }
     }
 }
