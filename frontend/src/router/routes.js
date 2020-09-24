@@ -13,7 +13,6 @@ const Page500 = resolve => { require.ensure(['../pages/Page500.vue'], ()=>{ reso
 const AddUserType = resolve => { require.ensure(['../admincomponents/AddUserType.vue'], ()=>{ resolve(require('../admincomponents/AddUserType.vue')); }); };
 const AddEmergencyType = resolve => { require.ensure(['../admincomponents/AddEmergencyType.vue'], ()=>{ resolve(require('../admincomponents/AddEmergencyType.vue')); }); };
 const AddLocation = resolve => { require.ensure(['../admincomponents/AddLocation.vue'], ()=>{ resolve(require('../admincomponents/AddLocation.vue')); }); };
-const AddMainLocation = resolve => { require.ensure(['../admincomponents/AddMainLocation.vue'], ()=>{ resolve(require('../admincomponents/AddMainLocation.vue')); }); };
 const AddCamera = resolve => { require.ensure(['../admincomponents/AddCamera.vue'], ()=>{ resolve(require('../admincomponents/AddCamera.vue')); }); };
 const AddUser = resolve => { require.ensure(['../admincomponents/AddUser.vue'], ()=>{ resolve(require('../admincomponents/AddUser.vue')); }); };
 
@@ -22,7 +21,6 @@ const ViewEmergencyTypes = resolve => { require.ensure(['../admincomponents/View
 const ViewUserTypes = resolve => { require.ensure(['../admincomponents/ViewUserTypes.vue'], ()=>{ resolve(require('../admincomponents/ViewUserTypes.vue')); }); }
 const ViewEmergencies = resolve => { require.ensure(['../admincomponents/ViewEmergencies.vue'], ()=>{ resolve(require('../admincomponents/ViewEmergencies.vue')); }); } 
 const ViewCameras = resolve => { require.ensure(['../admincomponents/ViewCameras.vue'], ()=>{ resolve(require('../admincomponents/ViewCameras.vue')); }); } 
-const ViewMainLocations = resolve => { require.ensure(['../admincomponents/ViewMainLocations.vue'], ()=>{ resolve(require('../admincomponents/ViewMainLocations.vue')); }); } 
 const ViewLocations = resolve => { require.ensure(['../admincomponents/ViewLocations.vue'], ()=>{ resolve(require('../admincomponents/ViewLocations.vue')); }); } 
 
 
@@ -39,7 +37,6 @@ export const routes = [
         children:[
             { path : '/addusertypes', name: 'addusertypes', component: AddUserType },
             { path : '/addemergencytype', component : AddEmergencyType },
-            { path : '/addmainlocation', component : AddMainLocation },
             { path : '/addlocation', component : AddLocation },
             { path : '/addcamera' , component : AddCamera },
             { path : '/adduser' , component : AddUser},
@@ -48,7 +45,6 @@ export const routes = [
             { path : '/viewusertypes' , component : ViewUserTypes},
             { path : '/viewemergencies', component : ViewEmergencies},
             { path : '/viewcameras' , component : ViewCameras},
-            { path : '/viewmainlocations' , component : ViewMainLocations},
             { path : '/viewlocations', component : ViewLocations}
         ]
     },

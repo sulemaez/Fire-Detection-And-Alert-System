@@ -11,7 +11,7 @@ public class RepositoryConfig implements RepositoryRestConfigurer {
 
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
-        config.exposeIdsFor(MainLocation.class);
+        config.exposeIdsFor(County.class);
         config.exposeIdsFor(Camera.class);
         config.exposeIdsFor(Emergency.class);
         config.exposeIdsFor(EmergencyType.class);

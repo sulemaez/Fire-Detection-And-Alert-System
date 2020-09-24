@@ -9,12 +9,12 @@ public class Location {
     @Id
     private String id;
     private String name;
-    private String mainLocationId;
+    private String countyId;
 
-    public Location(String id, String name, String mainLocationId) {
+    public Location(String id, String name, String countyId) {
         this.id = id;
         this.name = name;
-        this.mainLocationId = mainLocationId;
+        this.countyId = countyId;
     }
 
     public Location() {
@@ -36,11 +36,11 @@ public class Location {
         this.name = name;
     }
 
-    public String getMainLocationId() {
-        return mainLocationId;
+    public String getCountyId() {
+        return countyId;
     }
 
-    public void setMainLocationId(String mainLocationId) {
-        this.mainLocationId = mainLocationId;
+    public void setCountyId(String countyId) {
+        this.countyId = countyId;
     }
 }

@@ -19,10 +19,10 @@
                  <div class="row form-group">
                       <div class="col col-md-3"><label class=" form-control-label">Main Location:</label></div>
                       <div class="col-12 col-md-9">
-                           <select id="mainLocationSelect" class="form-control">
-                               <option v-for="mainLocation in mainLocations" :value="mainLocation.id" :selected="mainLocation.id == mainLocationId">{{ mainLocation.name }}</option>
+                           <select id="countieselect" class="form-control">
+                               <option v-for="county in counties" :value="county.id" :selected="county.id == countyId">{{ county.name }}</option>
                            </select>
-                            <small class="text-danger">{{ mainLocationError }}</small>
+                            <small class="text-danger">{{ countyError }}</small>
                       </div>
                  </div>
                  
@@ -42,9 +42,9 @@ export default {
         return {
             name : "",
             nameError : "",
-            mainLocations : [],
-            mainLocationError : "",
-            mainLocationId : "",
+            counties : [],
+            countyError : "",
+            countyId : "",
             edit : false
         }
     },
@@ -59,7 +59,7 @@ export default {
         
             let data = {
                 name : this.name,
-                mainLocationId : document.getElementById("mainLocationSelect").value
+                countyId : document.getElementById("countieselect").value
             }
       
             if(!this.edit){
@@ -103,20 +103,20 @@ export default {
        },
        checkErrorMessages(){
            this.nameError = this.name.trim() == "" ?  "Please add a name" : ""
-           let loc = document.getElementById("mainLocationSelect").value
+           let loc = document.getElementById("countieselect").value
 
-           this.mainLocationError = loc == undefined || loc.trim() == "" ? "Please select main locatin" : "" 
+           this.countyError = loc == undefined || loc.trim() == "" ? "Please select main locatin" : "" 
        },
        clear(){
             this.name = ""
             this.nameError = ""
-            this.mainLocationError = ""
+            this.countyError = ""
        },
-       getMainLocations(){
-           this.$http.get(`${this.$apiUrl}/mainlocations`)
+       getcounties(){
+           this.$http.get(`${this.$apiUrl}/counties`)
                 .then(data =>{ 
-                    let  locations = data.data._embedded.mainlocations
-                    this.mainLocations = locations
+                    let  locations = data.data._embedded.counties
+                    this.counties = locations
 
                     if(locations.length == 0 ){
                         this.$swal.fire(
@@ -138,11 +138,11 @@ export default {
  
     computed : {
         formReady(){
-            return this.nameError.length == 0 && this.mainLocationError.length == 0
+            return this.nameError.length == 0 && this.countyError.length == 0
         }
     },
     mounted(){
-         this.getMainLocations()
+         this.getcounties()
          if(this.$route.query.edit != undefined){
             this.edit = true
 
@@ -150,7 +150,7 @@ export default {
             .then(data =>{ 
                 let location = data.data
                 this.name = location.name
-                this.mainLocationId = location.mainLocationId
+                this.countyId = location.countyId
              })
             .catch(e => {
                 this.$swal.fire(

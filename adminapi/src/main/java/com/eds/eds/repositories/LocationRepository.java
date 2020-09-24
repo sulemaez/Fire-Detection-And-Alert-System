@@ -11,5 +11,5 @@ import java.util.List;
 public interface LocationRepository extends MongoRepository<Location,String> {
    Location findByName(@Param("name") String name);
 
-   List<Location> findAllByMainLocationId(@Param("mainLocationId") String mainLocationId);
+   List<Location> findAllByCountyId(@Param("countyId") String countyId);
 }
