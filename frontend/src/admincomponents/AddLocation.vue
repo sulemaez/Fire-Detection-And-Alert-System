@@ -17,7 +17,7 @@
                  </div>
 
                  <div class="row form-group">
-                      <div class="col col-md-3"><label class=" form-control-label">Main Location:</label></div>
+                      <div class="col col-md-3"><label class=" form-control-label">County:</label></div>
                       <div class="col-12 col-md-9">
                            <select id="countieselect" class="form-control">
                                <option v-for="county in counties" :value="county.id" :selected="county.id == countyId">{{ county.name }}</option>
@@ -61,10 +61,11 @@ export default {
                 name : this.name,
                 countyId : document.getElementById("countieselect").value
             }
-      
+            this.$store.commit('setLoading', true)
             if(!this.edit){
                 this.$http.post(`${this.$apiUrl}/locations`,data)
                 .then(data=>{
+                    this.$store.commit('setLoading', false)
                 this.$swal.fire(
                         ``,
                         `Added Successfully !`,
@@ -73,6 +74,7 @@ export default {
                     this.clear()
                 }) 
                 .catch(err => {
+                    this.$store.commit('setLoading', false)
                     this.$swal.fire(
                         ``,
                         `${err.response.data.error}`,
@@ -83,6 +85,7 @@ export default {
             }else{
                  this.$http.put(`${this.$apiUrl}/locations/${this.$route.query.edit}`,data)
                 .then(data=>{
+                    this.$store.commit('setLoading', false)
                 this.$swal.fire(
                         ``,
                         `Edited Successfully !`,
@@ -91,6 +94,7 @@ export default {
               
                 }) 
                 .catch(err => {
+                    this.$store.commit('setLoading', false)
                     this.$swal.fire(
                         ``,
                         `${err.response.data.error}`,

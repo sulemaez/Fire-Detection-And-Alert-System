@@ -1,5 +1,7 @@
 package com.eds.eds.jwt;
 
+import com.eds.eds.models.User;
+import com.eds.eds.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,14 +24,47 @@ public class JwtAuthenticationController {
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private JwtUserDetailsService userDetailsService;
+    @Autowired
+    private UserRepository userRepository;
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody User user) throws Exception {
+        String username = getUserName(user);
+        authenticate(username, user.getPassword());
         final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
+                .loadUserByUsername(username);
+
+        user = userRepository.findByUsername(username).get();
+        if(!user.isAdmin()){
+            throw new Exception("INVALID_CREDENTIALS");
+        }
         final String token = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    @RequestMapping(value = "/authenticate/user", method = RequestMethod.POST)
+    public ResponseEntity<?> createAuthenticationTokenUser(@RequestBody User user) throws Exception {
+        String username = getUserName(user);
+        authenticate(username, user.getPassword());
+        final UserDetails userDetails = userDetailsService
+                .loadUserByUsername(username);
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    private String getUserName(User user) throws Exception{
+        try {
+            if(user.getEmail() != null && !user.getEmail().equalsIgnoreCase("")){
+               return userRepository.findByEmail(user.getEmail()).get().getUsername();
+            }else if(user.getPhone() != null && !user.getPhone().equals("")){
+                return userRepository.findByPhone(user.getPhone()).get().getUsername();
+            }else if (user.getUsername() != null && !user.getUsername().equalsIgnoreCase("")){
+                return user.getUsername();
+            }
+        }catch (Exception e){
+            throw new Exception("INVALID_CREDENTIALS", e);
+        }
+        return "";
     }
 
     private void authenticate(String username, String password) throws Exception {

@@ -1,10 +1,13 @@
+import VueRouter from 'vue-router';
+import Vue from 'vue'
+import store from '../store'
+
 // Views
 const Dashboard = resolve => { require.ensure(['../views/Dashboard.vue'], ()=>{ resolve(require('../views/Dashboard.vue')); }); };
 const AuthLayout = resolve => { require.ensure(['../layouts/AuthLayout.vue'], ()=>{ resolve(require('../layouts/AuthLayout.vue')); }); };
 
 //Pages
 const Login = resolve => { require.ensure(['../pages/login/Login.vue'], ()=>{ resolve(require('../pages/login/Login.vue')); }); };
-const Register = resolve => { require.ensure(['../pages/register/Register.vue'], ()=>{ resolve(require('../pages/register/Register.vue')); }); };
 
 const Page404 = resolve => { require.ensure(['../pages/Page404.vue'], ()=>{ resolve(require('../pages/Page404.vue')); }); };
 const Page500 = resolve => { require.ensure(['../pages/Page500.vue'], ()=>{ resolve(require('../pages/Page500.vue')); }); };
@@ -24,7 +27,7 @@ const ViewCameras = resolve => { require.ensure(['../admincomponents/ViewCameras
 const ViewLocations = resolve => { require.ensure(['../admincomponents/ViewLocations.vue'], ()=>{ resolve(require('../admincomponents/ViewLocations.vue')); }); } 
 
 
-export const routes = [
+const routes = [
     {
         path : '',
         name: 'home',
@@ -48,8 +51,6 @@ export const routes = [
             { path : '/viewlocations', component : ViewLocations}
         ]
     },
-
-   
     {
         path : '/auth',
         name: 'auth',
@@ -58,16 +59,7 @@ export const routes = [
             {
                 path: '/login',
                 component: Login,
-                name: 'login',
-                meta: {
-                    default: false,
-                    title: 'Login'
-                }
-            },
-            {
-                path: '/register',
-                component: Register,
-                name: 'Register'
+                name : 'login'
             },
             {
                 path: '/Page404',
@@ -89,3 +81,32 @@ export const routes = [
     // 404 redirect to home
     { path: '*', redirect: { name: 'Page404', component: Page404 }  }
 ];
+
+
+const router = new VueRouter({
+    routes,
+    linkActiveClass: 'open active',
+    scrollBehavior: () => ({ y: 0 }),
+    mode: 'hash'
+})
+
+router.beforeEach((to, from, next) => {
+
+  store.commit('setLoading', true)
+
+  if ((store.state.userToken == '' || store.state.userToken == null)  && to.path !== '/login') {
+    store.commit('setLoading', false)
+    return next({ name: 'login' })
+  }
+
+  store.commit('setLoading', false)
+
+
+  return next()
+})
+
+router.afterEach((to, from) => {
+    store.commit('setLoading', false)
+})
+
+export default router

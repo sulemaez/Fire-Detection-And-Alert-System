@@ -7,7 +7,7 @@
       </div>
       <div class="auth-wallpaper col-md-6 hidden-md-down">
         <div class="oblique"></div>
-        <router-link class="basix-home" :to="{path: '/'}"><img src="../images/logo.png" alt="Logo"></router-link>
+        <router-link class="basix-home" :to="{path: '/'}">EMERGENCY DETECTION SYSTEM</router-link>
       </div>
     </div>
   </div>

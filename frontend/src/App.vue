@@ -1,15 +1,21 @@
 <template>
   <div id="app">
+      <div v-if="show">
+          <loader></loader>   
+      </div>
      <router-view/>    
   </div>
 </template>
 
 <script>
-
-
-
+import Loader from './components/Loader'
 export default {
-  
+  components : { Loader },
+  computed: {
+     show(){
+         return this.$store.state.isLoading
+     }
+  }
 }
 </script>
 

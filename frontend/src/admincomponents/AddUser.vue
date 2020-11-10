@@ -91,13 +91,13 @@ export default {
                 email : this.email,
                 admin : this.admin,
                 typeId : document.getElementById("userType").value,
-                password : "password"
             }
-            
+             this.$store.dispatch('setLoading',true)
          
            if(!this.edit){
                  this.$http.post(`${this.$apiUrl}/users`,data)
                 .then(data=>{
+                    this.$store.commit('setLoading', false)
                 this.$swal.fire(
                         ``,
                         `Added Successfully !`,
@@ -106,9 +106,10 @@ export default {
                     this.clear()
                 }) 
                 .catch(err => {
+                    this.$store.commit('setLoading', false)
                     this.$swal.fire(
                         ``,
-                        `${err.response.data.error}`,
+                        `${err.response.data.message}`,
                         'error'
                     )
                 
@@ -116,6 +117,7 @@ export default {
            }else{
                 this.$http.put(`${this.$apiUrl}/users/${this.$route.query.edit}`,data)
                 .then(data=>{
+                    this.$store.commit('setLoading', false)
                     this.$swal.fire(
                         ``,
                         `Edited Successfully !`,
@@ -124,9 +126,10 @@ export default {
         
                 }) 
                 .catch(err => {
+                    this.$store.commit('setLoading', false)
                     this.$swal.fire(
                         ``,
-                        `${err.response.data.error}`,
+                        `${err.response.data.message}`,
                         'error'
                     )
                 

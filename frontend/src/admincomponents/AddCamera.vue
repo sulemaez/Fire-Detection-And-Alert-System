@@ -8,7 +8,8 @@
 
           <div class="card-body card-block">
              <form @submit.prevent="onSubmit"  class="form-horizontal">
-                 <div class="row form-group">
+
+                    <div class="row form-group">
                       <div class="col col-md-3"><label class=" form-control-label">Name :</label></div>
                       <div class="col-12 col-md-9">
                          <input  class="form-control" type="text" v-model="name">
@@ -17,13 +18,15 @@
                       
                  </div>
                 <div class="row form-group">
-                      <div class="col col-md-3"><label class=" form-control-label">Main Location:</label></div>
+                      <div class="col col-md-3"><label class=" form-control-label">County :</label></div>
                       <div class="col-12 col-md-9">
-                           <select @change="mainLocationChanged" id="mainLocationSelect" class="form-control">
-                               <option v-for="mainLocation in mainLocations" :value="mainLocation.id" >{{ mainLocation.name }}</option>
+                           <select @change="countyChanged" id="countieselect" class="form-control">
+                               <option v-for="county in counties" :value="county.id" >{{ county.name }}</option>
                            </select>
                       </div>
                  </div>
+
+              
 
                  <div class="row form-group">
                       <div class="col col-md-3"><label class=" form-control-label">Location:</label></div>
@@ -36,7 +39,7 @@
                  </div>
 
                  <div class="row form-group">
-                      <div class="col col-md-3"><label class=" form-control-label">X :</label></div>
+                      <div class="col col-md-3"><label class=" form-control-label">X coordinate:</label></div>
                       <div class="col-12 col-md-9">
                          <input  class="form-control" type="text" v-model="xValue">
                           <small class="text-danger">{{ xError }}</small>
@@ -44,7 +47,7 @@
                  </div>
                  
                  <div class="row form-group">
-                      <div class="col col-md-3"><label class=" form-control-label">Y :</label></div>
+                      <div class="col col-md-3"><label class=" form-control-label">Y coordinate:</label></div>
                       <div class="col-12 col-md-9">
                          <input  class="form-control" type="text" v-model="yValue">
                          <small class="text-danger">{{ yError }}</small>
@@ -72,14 +75,20 @@ export default {
             xError : "",
             yError : "",
             locationError : "",
-            mainLocations : [],
+            counties : [],
             locations : [],
             locationsStore : {},
-            edit : false
+            edit : false,
+            // default to Montreal to keep it simple
+            // change this to whatever makes sense
+            center: { lat: 45.508, lng: -73.587 },
+            marker : {lat: 45.508, lng: -73.587}
         }
     },
     methods : {
- 
+       setMarker(place){
+         alert(JSON.stringify(place))
+       },
        onSubmit(){
          
             //validate
@@ -93,24 +102,28 @@ export default {
                 coordinates : `${this.xValue},${this.yValue}`,
                 locationId : document.getElementById("locationSelect").value,
             }
-            
+            this.$store.commit('setLoading', true)
             if(this.edit){
         
                 this.$http.put(`${this.$apiUrl}/cameras/${this.$route.query.edit}`,data)
                 .then(data=>{
+                    this.$store.commit('setLoading', false)
                 this.$swal.fire(
                         ``,
                         `Edited Successfully !`,
                         'success'
                     )
                     this.clear()
+                    
                 }) 
                 .catch(err => {
+                    this.$store.commit('setLoading', false)
                     this.$swal.fire(
                         ``,
                         `${err.response.data.error}`,
                         'error'
                     )
+
                 
                 })
                 return
@@ -118,6 +131,7 @@ export default {
 
             this.$http.post(`${this.$apiUrl}/cameras`,data)
             .then(data=>{
+                this.$store.commit('setLoading', true)
                this.$swal.fire(
                     ``,
                     `Added Successfully !`,
@@ -126,6 +140,7 @@ export default {
                 this.clear()
             }) 
             .catch(err => {
+                this.$store.commit('setLoading', false)
                 this.$swal.fire(
                     ``,
                     `${err.response.data.error}`,
@@ -151,11 +166,11 @@ export default {
             this.yError = ""
             this.locationError = ""
        },
-       getMainLocations(){
-           this.$http.get(`${this.$apiUrl}/mainlocations`)
+       getcounties(){
+           this.$http.get(`${this.$apiUrl}/counties`)
                 .then(data =>{ 
-                    let  locations = data.data._embedded.mainlocations
-                    this.mainLocations = locations
+                    let  locations = data.data._embedded.counties
+                    this.counties = locations
 
                     if(locations.length == 0 ){
                         this.$swal.fire(
@@ -181,19 +196,23 @@ export default {
                 )
              } )
        },
-       mainLocationChanged(){
-            let id = document.getElementById("mainLocationSelect").value.trim()
+       countyChanged(){
+           
+            let id = document.getElementById("countieselect").value.trim()
+            
             this.locations = this.locationsStore[id]
+            console.log(this.locationsStore[id])
        },
-       getLocation(mainLocationId){
-            this.$http.get(`${this.$apiUrl}/locations/search/findAllByMainLocationId?mainLocationId=${mainLocationId}`)
+       getLocation(countyId){
+            this.$http.get(`${this.$apiUrl}/locations/search/findAllByCountyId?countyId=${countyId}`)
                 .then(data =>{ 
                     let  locations = data.data._embedded.locations
-                    this.locationsStore[mainLocationId] = locations
-                    this.locations = this.locationsStore[this.mainLocations[0].id]
+                    this.locationsStore[countyId] = locations
+                    this.locations = this.locationsStore[this.counties[0].id]
                 })
               .catch(err => { 
-                   this.locationsStore[mainLocationId] = []
+                   console.log("ERRRR")
+                   this.locationsStore[countyId] = []
                })
        }
     },
@@ -204,7 +223,7 @@ export default {
         }
     },
     mounted(){
-       this.getMainLocations()
+       this.getcounties()
        
        if(this.$route.query.edit != undefined){
             this.edit = true
@@ -213,7 +232,7 @@ export default {
             .then(data =>{ 
                 let location = data.data
                 this.name = location.name
-                this.mainLocationId = location.mainLocationId
+                this.countyId = location.countyId
                 this.xValue = location.coordinates.split(',')[0]
                 this.yValue = location.coordinates.split(',')[1]
              })
@@ -225,6 +244,10 @@ export default {
                 )
             })  
         }
+        console.log(this.$refs)
+
+
+
     }
 }
 </script>

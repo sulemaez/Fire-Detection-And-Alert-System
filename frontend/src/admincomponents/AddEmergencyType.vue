@@ -58,10 +58,11 @@ export default {
                 name : this.name,
                 description : this.description
             }
-      
+            this.$store.commit('setLoading', true)
             if(!this.edit){
                 this.$http.post(`${this.$apiUrl}/emergencytypes`,data)
                 .then(data=>{
+                    this.$store.commit('setLoading', false)
                 this.$swal.fire(
                         ``,
                         `Added Successfully !`,
@@ -70,6 +71,7 @@ export default {
                     this.clear()
                 }) 
                 .catch(err => {
+                    this.$store.commit('setLoading', false)
                     this.$swal.fire(
                         ``,
                         `${err.response.data.error}`,
@@ -80,6 +82,7 @@ export default {
             } else{
                 this.$http.put(`${this.$apiUrl}/emergencytypes/${this.$route.query.edit}`,data)
                     .then(data=>{
+                        this.$store.commit('setLoading', false)
                     this.$swal.fire(
                             ``,
                             `Edit Successfully !`,
@@ -88,6 +91,7 @@ export default {
                        
                     }) 
                     .catch(err => {
+                        this.$store.commit('setLoading', false)
                         this.$swal.fire(
                             ``,
                             `${err.response.data.error}`,

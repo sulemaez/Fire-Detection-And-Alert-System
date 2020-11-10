@@ -34,6 +34,11 @@ public class UserValidator implements Validator {
         if(user.getTypeId() == null || user.getTypeId().trim().equals("")){
             errors.rejectValue("typeId","field.empty");
         }
+        if(user.getEmail() == null || user.getEmail().trim().equals("")){
+            errors.rejectValue("email","field.empty");
+        }
+
+
 
     }
 }

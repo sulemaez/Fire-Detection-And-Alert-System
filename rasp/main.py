@@ -4,23 +4,23 @@ import urllib.request as request
 import cv2 as cv
 import numpy as np
 import time
-import socketio
+# import socketio
 import base64
 
 #setup socket io to transfer images
-sio = socketio.Client()
+# sio = socketio.Client()
 
-@sio.event
-def connect():
-    sio.emit('setname','camera')
+# @sio.event
+# def connect():
+#     sio.emit('setname','camera')
 
-@sio.event
-def connect_error():
-    print("The connection failed!")
-    print("\n")
-@sio.event
-def disconnect():
-    print("I'm disconnected!")
+# @sio.event
+# def connect_error():
+#     print("The connection failed!")
+#     print("\n")
+# @sio.event
+# def disconnect():
+#     print("I'm disconnected!")
 
 
 
@@ -115,21 +115,28 @@ def sendImage(frame):
 
 
 #URL to camera
-url = 'http://192.168.43.1:8080/shot.jpg'
-sio.connect('http://localhost:5000')
+url = 'http://192.168.43.151:8081/ecd35f7d-9f00-49bf-aa1b-c9532f6e4cbc'
+# sio.connect('http://localhost:5000')
 
 while True:
    
+    print("kkk")
     # Use urllib to get the image from the IP camera
     imgResp = request.urlopen(url)
-   
+    
+
+    print("o")
+    
+    # print(bytearray(imgResp.read()))
     # Numpy to convert into a array
     imgNp = np.array(bytearray(imgResp.read()),dtype=np.uint8)
-
+    print("polololo")
     # Finally decode the array to OpenCV usable format ;) 
     img = cv.imdecode(imgNp,-1)
-    
+    print("lolo")
     blob = cv.dnn.blobFromImage(img,1/255,(inp_width,inp_height),[0,0,0],1,crop=False)
+    
+    print("popo")
 
     net.setInput(blob)
 
@@ -137,7 +144,10 @@ while True:
 
     postProcess(img,outs)
 
-    sendImage(img)
+    # sendImage(img)
+    cv.imshow(img)
+
+    print("OMENA")
   
     #send model
     time.sleep(0.1) 

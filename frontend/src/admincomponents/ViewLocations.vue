@@ -8,7 +8,7 @@
               <tr>
                 <td>#</td>
                 <td>Name</td>
-                <td>Main Location</td>
+                <td>County</td>
                 <td>
                     <i class="fa fa-cogs"></i>
                 </td>
@@ -19,7 +19,7 @@
                     <tr v-for="(location,index) in locations">
                         <td>{{ index + 1 }}</td>
                         <td>{{ location.name }}</td>
-                        <td>{{ mainLocations[location.mainLocationId] }}</td>
+                        <td>{{ counties[location.countyId] }}</td>
                         <td>
                             <div class="row">
                                 <div class="col-12">
@@ -51,17 +51,17 @@
         data (){
             return{
                 locations : [] ,
-                mainLocations : {} ,
+                counties : {} ,
                 
             }
         },
         methods : {
-            getMainLocations(){
-              this.$http.get(`${this.$apiUrl}/mainlocations`)
+            getcounties(){
+              this.$http.get(`${this.$apiUrl}/counties`)
               .then(data =>{ 
-                    let  locations = data.data._embedded.mainlocations
+                    let  locations = data.data._embedded.counties
                     locations.forEach(location => {
-                         this.mainLocations[location.id] = location.name
+                         this.counties[location.id] = location.name
                          console.log()
                     })
 
@@ -113,7 +113,7 @@
             }
         },
         mounted(){
-            this.getMainLocations()
+            this.getcounties()
             
         }
 
