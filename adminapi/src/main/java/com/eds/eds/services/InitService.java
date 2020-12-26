@@ -55,14 +55,15 @@ public class InitService {
     }
 
     public void initUser(){
+        System.out.println("INIT USER USRE");
        Optional<User> user = userRepository.findByUsername("admin");
        if(user.isEmpty()){
-
+           System.out.println("save");
            User admin = new  User();
            admin.setUsername("admin");
-           admin.setName("Stephen Oyeyo");
+           admin.setName("EDS ADMIN");
            admin.setAdmin(true);
-           admin.setEmail("steve.oyeyo@gmail.com");
+           admin.setEmail("admin@eds.com");
            admin.setPassword("$2a$10$OWI0ldJvVG5d.vn00RVM0uhbusLfmZuW9tcyaqxu8QPqeiIqBG4Qe");
            userRepository.save(admin);
        }

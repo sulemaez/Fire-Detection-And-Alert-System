@@ -25,7 +25,7 @@ public class EncryptionService {
     public String generatePassword() {
         int leftLimit = 48; // numeral '0'
         int rightLimit = 122; // letter 'z'
-        int targetStringLength = 10;
+        int targetStringLength = 8;
         Random random = new Random();
 
         return random.ints(leftLimit, rightLimit + 1)

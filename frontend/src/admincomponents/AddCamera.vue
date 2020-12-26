@@ -3,7 +3,7 @@
         <div class="col-md-6">
              <div class="card">
           <div class="card-header">
-            <strong>{{ edit ? 'Edit' : 'Add' }}  Location</strong>
+            <strong>{{ edit ? 'Edit' : 'Add' }}  camera</strong>
           </div>
 
           <div class="card-body card-block">
@@ -37,22 +37,23 @@
                           <small class="text-danger">{{ locationError }}</small>
                       </div>
                  </div>
+                
+                <div class="row form-group">
+                      <div class="col col-md-3"><label class=" form-control-label">Lat :</label></div>
+                      <div class="col-12 col-md-9">
+                         <input  class="form-control" type="text" v-model="latValue">
+                         <small class="text-danger">{{ latError }}</small>
+                      </div>
+                 </div>
 
                  <div class="row form-group">
-                      <div class="col col-md-3"><label class=" form-control-label">X coordinate:</label></div>
+                      <div class="col col-md-3"><label class=" form-control-label"> Long :</label></div>
                       <div class="col-12 col-md-9">
-                         <input  class="form-control" type="text" v-model="xValue">
-                          <small class="text-danger">{{ xError }}</small>
+                         <input  class="form-control" type="text" v-model="longValue">
+                          <small class="text-danger">{{ longError }}</small>
                       </div>
                  </div>
                  
-                 <div class="row form-group">
-                      <div class="col col-md-3"><label class=" form-control-label">Y coordinate:</label></div>
-                      <div class="col-12 col-md-9">
-                         <input  class="form-control" type="text" v-model="yValue">
-                         <small class="text-danger">{{ yError }}</small>
-                      </div>
-                 </div>
 
                  <div class="col-md-12 d-flex justify-content-center">
                     <button class="btn btn-primary w-25">{{ edit ? 'Edit' : 'Add' }} </button>
@@ -69,11 +70,11 @@ export default {
     data(){
         return {
             name : "",
-            xValue : "",
-            yValue : "",
+            longValue : "",
+            latValue : "",
             nameError : "",
-            xError : "",
-            yError : "",
+            longError : "",
+            latError : "",
             locationError : "",
             counties : [],
             locations : [],
@@ -99,7 +100,7 @@ export default {
            
            let data = {
                 name : this.name,
-                coordinates : `${this.xValue},${this.yValue}`,
+                coordinates : `${this.latValue},${this.longValue}`,
                 locationId : document.getElementById("locationSelect").value,
             }
             this.$store.commit('setLoading', true)
@@ -152,18 +153,26 @@ export default {
        },
        checkErrorMessages(){
            this.nameError = this.name.trim() == "" ?  "Please add a name" : ""
-           this.xError = this.xValue.trim() == "" ?  "Please add X coordinate" : ""
-           this.yError = this.yValue.trim() == "" ?  "Please add Y coordinate" : ""
+           this.longError = this.longValue.trim() == "" ?  "Please add longitude" : ""
+           this.latError = this.latValue.trim() == "" ?  "Please add Y latitude" : ""
            let loc = document.getElementById("locationSelect").value
            this.locationError = loc == undefined || loc.trim() == "" ? "Please select location" : "" 
+
+           if(isNaN(this.longValue)){
+               this.longError = "Enter a valid coordinate"
+           }
+
+           if(isNaN(this.latValue)){
+               this.latError = "Enter a valid coordinatez"
+           }
        },
        clear(){
             this.name = ""
-            this.xValue = ""
-            this.yValue = ""
+            this.longValue = ""
+            this.latValue = ""
             this.nameError = ""
-            this.xError = ""
-            this.yError = ""
+            this.longError = ""
+            this.latError = ""
             this.locationError = ""
        },
        getcounties(){
@@ -219,7 +228,7 @@ export default {
     computed : {
         formReady(){
             return this.nameError.length == 0 && 
-            this.xError.length == 0 && this.yError.length == 0
+            this.longError.length == 0 && this.latError.length == 0
         }
     },
     mounted(){
@@ -233,8 +242,8 @@ export default {
                 let location = data.data
                 this.name = location.name
                 this.countyId = location.countyId
-                this.xValue = location.coordinates.split(',')[0]
-                this.yValue = location.coordinates.split(',')[1]
+                this.longValue = location.coordinates.split(',')[0]
+                this.latValue = location.coordinates.split(',')[1]
              })
             .catch(e => {
                 this.$swal.fire(

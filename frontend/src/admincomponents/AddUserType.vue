@@ -42,7 +42,7 @@ export default {
             description : "",
             descriptionError : "",
             nameError : "",
-            edit : true
+            edit : this.$route.query.edit != undefined
         }
     },
     methods : {

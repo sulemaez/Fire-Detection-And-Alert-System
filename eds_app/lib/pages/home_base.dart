@@ -1,63 +1,64 @@
 import 'package:edsapp/config/size_config.dart';
-import 'package:edsapp/pages/home/map_page.dart';
-import 'package:edsapp/pages/home/profile_page.dart';
-import 'package:edsapp/pages/home/video_page.dart';
+import 'package:edsapp/models/camera.dart';
+import 'package:edsapp/models/county.dart';
+import 'package:edsapp/models/location.dart';
+import 'package:edsapp/pages/cameras.dart';
+import 'package:edsapp/pages/profile_page.dart';
+import 'package:edsapp/services/location.dart';
+import 'package:edsapp/services/video_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
-class HomeBase extends StatefulWidget{
-
-  final bool newGroup;
-
-  HomeBase({this.newGroup});
-
+class HomeBase extends StatefulWidget {
   @override
-  HomeBaseState createState() => HomeBaseState();
+  _HomeBaseState createState() => _HomeBaseState();
 }
 
-class HomeBaseState extends State<HomeBase>{
+class _HomeBaseState extends State<HomeBase> {
 
-  int _currentIndex = 0;
-
-  MapPage _mapPage;
-  MapPageState mapPageState;
+  CamerasPage _camerasPage;
   ProfilePage _profilePage;
-  ProfilePageState profilePageState;
-  VideoPage _videoPage;
-  VideoPageState videoPageState;
+  ProfilePageState _profilePageState;
+  CamerasPageState _camerasPageState;
+
+  var _currentIndex = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    Camera.list = [];
+    Location.list = [];
+    County.list = [];
+    checkData();
+    //initialize chat
+    setPages();
+
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-
+    checkData();
     //initialize chat
     setPages();
   }
 
   void setPages(){
-     _mapPage = MapPage( setPageState : (state){
-         mapPageState = state;
-      });
-     _profilePage = ProfilePage(setPageState: (state) {
-        profilePageState = state;
+     _camerasPage = CamerasPage(setPageState: (state){
+       _camerasPageState = state;
      },);
-     _videoPage = VideoPage(setPageState: (state){
-         videoPageState = state;
-     },);
-  }
 
+     _profilePage = ProfilePage(setPageState: (state){
+       _profilePageState = state;
+     },);
+
+  }
 
   @override
   Widget build(BuildContext context) {
-   SizeConfig().init(context);
+    SizeConfig().init(context);
     // TODO: implement build
     return Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -66,7 +67,7 @@ class HomeBaseState extends State<HomeBase>{
           child: IndexedStack(
               index: _currentIndex,
               children:[
-                  _mapPage , _videoPage , _profilePage
+                _camerasPage , _profilePage
               ]
           ),
         ),
@@ -80,7 +81,7 @@ class HomeBaseState extends State<HomeBase>{
             setState(() {
               _currentIndex = index;
             });
-            _handlePageActivities(index);
+
           }
           ,unselectedItemColor: Colors.grey,
           selectedItemColor: Theme.of(context).primaryColor,
@@ -97,37 +98,27 @@ class HomeBaseState extends State<HomeBase>{
     );
   }
 
-
-  //refreshes the page
-  void _handlePageActivities(int index)async{
-    if(index == 1){
-      SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-    }else{
-
-      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    }
-    refreshPages();
-  }
-
-  refreshPages(){
-
-  }
-
-
   void setIndex(int index) {
     setState(() {
       this._currentIndex = index;
     });
   }
 
+  void checkData() async{
+    LocationService.sendLocation();
+
+    if(VideoStream.socket == null || ! await VideoStream.socket.isConnected()){
+       VideoStream.initialize();
+    }
+
+
+  }
+
 }
 
-
 List<Destination> allDestinations = <Destination>[
-  Destination("Map",icon: Icons.map),
-  Destination("CCTV",icon: Icons.camera),
+  Destination("Cameras",icon: Icons.camera),
   Destination("Profile",icon: Icons.person),
-
 ];
 
 class Destination {

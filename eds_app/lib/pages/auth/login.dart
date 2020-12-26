@@ -1,11 +1,15 @@
 
+import 'dart:convert';
 import 'dart:ui';
 import 'package:edsapp/config/size_config.dart';
+import 'package:edsapp/models/user.dart';
+import 'package:edsapp/pages/home_base.dart';
 import 'package:edsapp/services/auth.dart';
+import 'package:edsapp/services/repository.dart';
 import 'package:edsapp/widgets/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class LoginPage extends StatefulWidget{
@@ -26,6 +30,12 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
   var isLoading = false;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    checkLogin(context);
+  }
+
+  @override
   Widget build(BuildContext contextMain) {
     SizeConfig().init(contextMain);
     return Scaffold(
@@ -40,7 +50,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
                  Column(
                      children: <Widget>[
                        Container(height: SizeConfig.blockSizeVertical * 10,),
-                       Text("EDS",style: TextStyle( color: Theme.of(context).primaryColor , fontSize: SizeConfig.blockSizeVertical * 5)),
+                       Text("EDAS",style: TextStyle( color: Theme.of(context).accentColor , fontSize: SizeConfig.blockSizeVertical * 5)),
                        Container(height: SizeConfig.blockSizeVertical * 10,),
                        Card(
                            color: Color.fromARGB(255,244, 244, 244),
@@ -64,7 +74,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
                                          children: <Widget>[
                                            Icon(Icons.person,color: Colors.orangeAccent,size: SizeConfig.blockSizeHorizontal * 4,),
                                            Padding( padding: EdgeInsets.only(left: 5),),
-                                           Text("username",style: TextStyle(fontWeight: FontWeight.w400,fontFamily: 'Proxima Nova',color: Theme.of(context).primaryColor , fontSize: SizeConfig.blockSizeHorizontal * 4),),
+                                           Text("Email",style: TextStyle(fontWeight: FontWeight.w400,fontFamily: 'Proxima Nova',color: Theme.of(context).accentColor , fontSize: SizeConfig.blockSizeHorizontal * 4),),
                                          ],
                                        ),
 
@@ -103,7 +113,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
                                          children: <Widget>[
                                            Icon(Icons.lock,color: Colors.orangeAccent,size: SizeConfig.blockSizeHorizontal * 4,),
                                            Padding( padding: EdgeInsets.only(left: 5),),
-                                           Text("Password",style: TextStyle(fontWeight: FontWeight.w400,fontFamily: 'Proxima Nova',color: Theme.of(context).primaryColor , fontSize: SizeConfig.blockSizeHorizontal * 4),),
+                                           Text("Password",style: TextStyle(fontWeight: FontWeight.w400,fontFamily: 'Proxima Nova',color: Theme.of(context).accentColor , fontSize: SizeConfig.blockSizeHorizontal * 4),),
                                          ],
                                        ),
 
@@ -139,32 +149,49 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
                                        Container(height: SizeConfig.blockSizeVertical * 3,),
                                        MaterialButton(
                                          minWidth: SizeConfig.blockSizeHorizontal * 50,
-                                         height: SizeConfig.blockSizeVertical * 5,
+                                         height: SizeConfig.blockSizeVertical * 6,
                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                                         color: Theme.of(context).primaryColor,
+                                         color: Theme.of(context).accentColor,
                                          child: Text(
                                            "LOGIN",
                                            style: TextStyle(fontFamily: 'Proxima Nova',color: Colors.white,fontSize: SizeConfig.blockSizeHorizontal * 4.5),
                                          ),
                                          onPressed: () async{
+                                           setState(() {
+                                             isLoading = true;
+                                           });
                                            if(_formKey.currentState.validate()){
-                                               setState(() {
-                                                 isLoading = true;
-                                               });
+
                                               _formKey.currentState.save();
                                                var res = await  Auth.signIn(_loginData.username, _loginData.password);
-                                               setState(() {
-                                                 isLoading = false;
-                                               });
+
                                                if(res){
+
+                                                   SharedPreferences.getInstance().then((value)async{
+                                                      value.setString("user", jsonEncode(Auth.user));
+                                                      await Repository.getAll();
+                                                      setState(() {
+                                                        isLoading = false;
+                                                      });
+                                                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomeBase()), (route) => false);
+                                                   });
 
                                                }else{
                                                   setState(() {
                                                      _errors['passwordError'] = "Invalid Credentials";
                                                      _errors['usernameError'] = "Invalid Credentials";
                                                   });
+                                                  setState(() {
+                                                    isLoading = false;
+                                                  });
                                                }
+                                           }else{
+                                             setState(() {
+                                               isLoading = false;
+                                             });
                                            }
+
+
                                          },
                                        )
                                      ]
@@ -185,9 +212,23 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
   }
 }
 
+
+checkLogin(context) async{
+   SharedPreferences.getInstance().then((value) async{
+       String user = await value.get("user");
+       if(user != null){
+          Auth.user = User.fromJson(jsonDecode(user));
+          Navigator.of(context).pushAndRemoveUntil( MaterialPageRoute(builder: (BuildContext context) => HomeBase()), (route) => false);
+       }
+   });
+}
+
+
+
 class _LoginData{
 
   String username;
   String password;
 
 }
+

@@ -8,14 +8,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'auth.dart';
 
 class Http{
-  static String baseUrl = "https://805ba1dc0e3d.ngrok.io/";
+  static String baseUrl = "http://192.168.43.227:8080/";
   static String apiUrl = "${baseUrl}api/";
   static String socketUrl = "http://192.168.43.227:5000";
 
   static Dio _dio = Dio();
 
   static Future<Response> doPost({data,url,}) async{
-
+    print(url);
     Response response = await _dio.post(url, data: data ,options: Options(
         contentType: Headers.jsonContentType,
         responseType: ResponseType.json,

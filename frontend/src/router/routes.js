@@ -25,7 +25,7 @@ const ViewUserTypes = resolve => { require.ensure(['../admincomponents/ViewUserT
 const ViewEmergencies = resolve => { require.ensure(['../admincomponents/ViewEmergencies.vue'], ()=>{ resolve(require('../admincomponents/ViewEmergencies.vue')); }); } 
 const ViewCameras = resolve => { require.ensure(['../admincomponents/ViewCameras.vue'], ()=>{ resolve(require('../admincomponents/ViewCameras.vue')); }); } 
 const ViewLocations = resolve => { require.ensure(['../admincomponents/ViewLocations.vue'], ()=>{ resolve(require('../admincomponents/ViewLocations.vue')); }); } 
-
+const DataPage = resolve => { require.ensure(['../admincomponents/DataPage.vue'], ()=>{ resolve(require('../admincomponents/DataPage.vue')); }); } 
 
 const routes = [
     {
@@ -38,6 +38,7 @@ const routes = [
             default: Dashboard
         },
         children:[
+            { path : '/' , component : DataPage },
             { path : '/addusertypes', name: 'addusertypes', component: AddUserType },
             { path : '/addemergencytype', component : AddEmergencyType },
             { path : '/addlocation', component : AddLocation },

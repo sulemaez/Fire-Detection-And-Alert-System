@@ -39,17 +39,20 @@ public class JwtAuthenticationController {
             throw new Exception("INVALID_CREDENTIALS");
         }
         final String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(new JwtResponse(token,user));
     }
 
     @RequestMapping(value = "/authenticate/user", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationTokenUser(@RequestBody User user) throws Exception {
         String username = getUserName(user);
+        System.out.println("USERNAME");
+        System.out.println(username);
         authenticate(username, user.getPassword());
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(username);
+        user = userRepository.findByUsername(username).get();
         final String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(new JwtResponse(token,user));
     }
 
     private String getUserName(User user) throws Exception{

@@ -15,6 +15,13 @@
                                 <small class="text-danger">{{ nameError }}</small>
                             </div>
                         </div>
+                           <div class="row form-group">
+                            <div class="col col-md-3"><label class=" form-control-label">User Name :</label></div>
+                            <div class="col-12 col-md-9">
+                                <input v-model="username" class="form-control" type="text">
+                                <small class="text-danger">{{ usernameError }}</small>
+                            </div>
+                        </div>
                         <div class="row form-group">
                             <div class="col col-md-3"><label class=" form-control-label">Phone :</label></div>
                             <div class="col-12 col-md-9">
@@ -69,11 +76,13 @@ export default {
             email : "",
             edit : false,
             admin : false, 
+            username : "",
             typeId : "",
             userTypes : [ ],    
             nameError : "",
             phoneError : "",
             emailError : "",
+            usernameError : ""
         }
     },
     methods : {
@@ -91,6 +100,7 @@ export default {
                 email : this.email,
                 admin : this.admin,
                 typeId : document.getElementById("userType").value,
+                username : this.username
             }
              this.$store.dispatch('setLoading',true)
          
@@ -142,11 +152,13 @@ export default {
             this.nameError =  this.name.trim() == "" ?  "Please add a name" : ""
             this.phoneError = this.phone.trim() == "" ? "Please add a phone number" : ""
             this.emailError = this.email.trim() == "" ?  "Please add an email" : ""
+            this.usernameError = this.usernameError.trim() == "" ? "Please add username" : ""
        },
        clear(){
             this.name = ""
             this.phone = ""
             this.email = ""
+            this.username = ""
        },  
        
        getUserTypes(){

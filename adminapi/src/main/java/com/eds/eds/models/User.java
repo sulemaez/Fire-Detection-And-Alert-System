@@ -14,10 +14,9 @@ public class User {
     private String email;
     private String typeId;
     private boolean admin;
-
     private String username;
-
     private String password;
+    private String location;
 
     public User(String id, String name, String phone, String email, String typeId, boolean admin, String username, String password) {
         this.id = id;
@@ -95,5 +94,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

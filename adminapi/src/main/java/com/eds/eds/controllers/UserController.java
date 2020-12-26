@@ -1,6 +1,7 @@
 package com.eds.eds.controllers;
 
 
+import com.eds.eds.jwt.JwtTokenUtil;
 import com.eds.eds.models.User;
 import com.eds.eds.repositories.UserRepository;
 import com.eds.eds.services.EncryptionService;
@@ -23,6 +24,9 @@ public class  UserController {
     @Autowired
     private EncryptionService encryptionService;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
     @RequestMapping(method = RequestMethod.POST, value = "/users")
     public @ResponseBody User addUsers(@RequestBody  User user) throws Exception {
         if(userRepository.findByPhone(user.getPhone().trim()).isPresent()){
@@ -42,5 +46,6 @@ public class  UserController {
         sendMail.send(user.getEmail(),pass);
         return user;
     }
+
 
 }
